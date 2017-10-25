@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>hereveryday - {% block title %}主页{% endblock %}</title>
+</head>
+<body>
+
+{% include 'nav.html' %}
+
+{% block content %}
+<h1>这是默认主页</h1>
+{% endblock %}
+
+{% include 'bottom.html' %}
+</body>
+</html>

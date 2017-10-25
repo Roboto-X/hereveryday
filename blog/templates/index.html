@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+ 
+{% block title %}主页{% endblock %}
+ 
+{% block content %}
+<div>
+    <ul>
+        {% for title in titles %}
+        <li>
+            <a href="{% url 'article' title.id %}">{{title.title}}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+</div>
+<a href="{% url 'add' %}">写文章</a>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}日志{% endblock %}
+
+{% block content %}
+<div>
+    <h4>{{article.title}}</h4>
+    <div><span style="white-space: pre-line">{{article.content}}</span></div>
+    <p><img src="{{article.img}}"/></p>
+</div>
+{% endblock %}
