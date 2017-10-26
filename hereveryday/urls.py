@@ -6,8 +6,10 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^$', blog_views.index, name='index'),  # blog index
-    url(r'^article/(\d+)/$', blog_views.article, name="article"),  # blog add article
-    url(r'^add/$', blog_views.add, name="add"),  # blog add article
+    url(r'^blog/login/$', blog_views.login, name='login'),
+    url(r'^blog/logout/$', blog_views.logout, name='logout'),
+    url(r'^blog/article/(\d+)/$', blog_views.article, name="article"),  # blog add article
+    url(r'^blog/add/$', blog_views.add, name="add"),  # blog add article
 
 
     url(r'^admin/', admin.site.urls),

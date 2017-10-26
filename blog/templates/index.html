@@ -3,6 +3,13 @@
 {% block title %}主页{% endblock %}
  
 {% block content %}
+<div id="login_div">
+    {% if request.session.name %}
+        <div>你好，{{request.session.name}} <a href="{% url 'logout' %}">登出</a></div>
+    {% else %}
+        <a href="{% url 'login' %}">登录</a>
+    {% endif %}
+</div>
 <div>
     <ul>
         {% for title in titles %}
@@ -13,5 +20,7 @@
     </ul>
 
 </div>
+
 <a href="{% url 'add' %}">写文章</a>
+
 {% endblock %}
