@@ -20,7 +20,7 @@
     </ul>
 
 </div>
-
+{% if request.session.name %}
 <a href="{% url 'add' %}">写文章</a>
-
+{% endif %}
 {% endblock %}
