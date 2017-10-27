@@ -62,3 +62,7 @@ def add(request):
             return render(request, constants.HTML_ADD, {'form': form})
     else:
         return HttpResponseRedirect(reverse('login'))
+
+
+def about(request):
+    return render(request, constants.HTML_ARTICLE)
