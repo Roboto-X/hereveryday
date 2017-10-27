@@ -4,7 +4,7 @@ from django import forms
 
 class LoginForm(forms.Form):
     name = forms.CharField(label="用户名", max_length=50, min_length=1)
-    password = forms.CharField(label="密码", max_length=50, min_length=1)
+    password = forms.CharField(label="密码",widget=forms.PasswordInput, max_length=50, min_length=1)
 
 
 class AddForm(forms.Form):

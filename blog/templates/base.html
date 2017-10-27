@@ -6,7 +6,13 @@
 <body>
 
 {% include 'nav.html' %}
-
+<div id="login_div">
+    {% if request.user.is_authenticated %}
+        <div>你好，{{request.user.username}} <a href="{% url 'logout' %}">登出</a></div>
+    {% else %}
+        <a href="{% url 'login' %}">登录</a>
+    {% endif %}
+</div>
 {% block content %}
 <h1>这是默认主页</h1>
 {% endblock %}

@@ -1,3 +1,6 @@
 .idea/
 db.sqlite3
 log/
+*.pyc
+blog/static/photos/
+blog/__pycache__/
