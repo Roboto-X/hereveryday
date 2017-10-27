@@ -9,32 +9,43 @@
 
     <!-- Bootstrap -->
     <link href="static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="static/css/blog.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="static/bootstrap-3.3.7-dist/js/html5shiv.min.js"></script>
-      <script src="static/bootstrap-3.3.7-dist/js/respond.min.js"></script>
+    <script src="static/bootstrap-3.3.7-dist/js/html5shiv.min.js"></script>
+    <script src="static/bootstrap-3.3.7-dist/js/respond.min.js"></script>
     <![endif]-->
-  </head>
+</head>
 <body>
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="static/js/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-
 {% include 'nav.html' %}
-<div id="login_div">
-    {% if request.user.is_authenticated %}
-        <div>你好，{{request.user.username}} <a href="{% url 'logout' %}">登出</a></div>
-    {% else %}
-        <a href="{% url 'login' %}">登录</a>
-    {% endif %}
-</div>
-{% block content %}
-<h1>这是默认主页</h1>
-{% endblock %}
 
-{% include 'bottom.html' %}
+<div class="container">
+    <div class="row row-offcanvas row-offcanvas-right">
+        {% block content %}
+
+        {% endblock %}
+        <hr>
+    </div><!--/.container-->
+    {% include 'bottom.html' %}
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="static/js/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+  $('[data-toggle="offcanvas"]').click(function () {
+    $('.row-offcanvas').toggleClass('active')
+  });
+});
+
+
+
+</script>
 </body>
 </html>
