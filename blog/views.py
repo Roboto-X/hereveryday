@@ -4,7 +4,7 @@ from django.shortcuts import HttpResponseRedirect
 from django.shortcuts import reverse
 from django.contrib import auth
 from blog.models import Article
-from .forms import AddForm, LoginForm
+from .forms import AddForm, LoginForm, CommentForm
 from .util import util
 from .constants import constants
 
@@ -41,7 +41,8 @@ def logout(request):
 def article(request, article_id):
     article_by_id = Article.objects.get(id=article_id)
     article_by_id.img.name = util.convert_readable_img(article_by_id.img.name)
-    return render(request, constants.HTML_ARTICLE, {"article": article_by_id})
+    form = CommentForm()
+    return render(request, constants.HTML_ARTICLE, {"article": article_by_id, 'form': form})
 
 
 def add(request):

@@ -11,3 +11,7 @@ class AddForm(forms.Form):
     title = forms.CharField(label="标题", max_length=50, min_length=1)
     content = forms.CharField(label="文章", widget=forms.Textarea, max_length=50000, min_length=1)
     img = forms.FileField(label="照片", )
+
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(label="评论", widget=forms.Textarea, max_length=50000)
