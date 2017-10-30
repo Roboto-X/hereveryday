@@ -65,4 +65,4 @@ def add(request):
 
 
 def about(request):
-    return render(request, constants.HTML_ARTICLE)
+    return render(request, constants.HTML_ABOUT)
