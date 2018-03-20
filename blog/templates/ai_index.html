@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}主页{% endblock %}
+
+{% block content %}
+<div>
+    <canvas id="myCanvas" border="1" width="280px" height="280px">
+        Fallback content, in case the browser does not support Canvas.
+    </canvas>
+    <a href="javascript:void(0);" onclick="reset_canvas()">清空</a>
+    <h2>请输入0-9任意数字</h2>
+    <a href="javascript:void(0);" onclick="predict()">识别</a>
+    <div id='result'></div>
+</div>
+<style>
+#myCanvas {
+	cursor: crosshair;
+	border: solid #c3c3c3;
+	width="512px";
+	height="512px";
+}
+
+
+</style>
+<script type="text/javascript">
+var ball;
+var mouseX = 100;
+var mouseY = 100;
+var angle = 0;
+var radius = 0;
+
+var ballstyle = "."
+var ballcolor = "#FF0000";
+var allzindex = 0;
+
+var cav_elem;
+var cav_context;
+var mouse_down = false;
+var lineWidth = 20;
+
+//old positon
+var opos;
+
+function draw(){
+        ball = document.createElement("p");
+        ball.style.position = "absolute";
+        ball.style.color = ballcolor;
+        ball.style.zIndex = allzindex+1;
+        ball.innerHTML = ballstyle;
+        document.body.appendChild(ball);
+        document.all.selected = false;
+
+    ball.style["left"] = mouseX+ "px";
+    ball.style["top"] = mouseY+ "px";
+}
+function draw_cav(npos){
+
+
+
+    if(opos){
+        cav_context.beginPath();
+        // Start from the top-left point.
+
+        cav_context.moveTo(opos.x,opos.y);
+        cav_context.lineTo(npos.x,npos.y);
+
+        cav_context.stroke();
+        cav_context.closePath();
+
+    }
+
+}
+
+function MousePos(e){
+    eee = e || window.event;
+    var x,y;
+    if(!document.all){
+        x = e.pageX;
+        y = e.pageY;
+    }
+    else{
+        x = event.clientX + document.documentElement.scrollLeft;
+        y = event.clientY + document.documentElement.scrollTop;
+    }
+    return {x:x,y:y};
+}
+function setXY(e){
+    eee = e || window.event;
+    var pos = MousePos(e);
+    mouseX = pos.x;
+    mouseY = pos.y;
+    //if(e.button == 1){
+        draw_cav(pos);
+    //}
+    opos = pos;
+}
+window.onload = function(){
+        //get canvas and context
+            var elem = document.getElementById('myCanvas');
+            if (elem && elem.getContext) {
+                cav_elem = elem;
+              var context = elem.getContext('2d');
+              if (context) {
+                cav_context = context;
+                cav_context.lineWidth = lineWidth;
+                cav_context.fillStyle = '#FFFFFF';
+                cav_context.fillRect(0, 0, cav_elem.width, cav_elem.height);
+              }
+              elem.onmousedown = function(e){
+              	mouse_down = true;
+              	cav_context.beginPath();
+              	canvasX = e.pageX - myCanvas.offsetLeft;
+				canvasY = e.pageY - myCanvas.offsetTop;
+        		cav_context.moveTo(canvasX, canvasY);
+              };
+              elem.onmouseup = function(e){
+              	mouse_down = false;
+              	cav_context.closePath();
+              };
+              elem.onmousemove = function(e){
+    			if(mouse_down){
+					eee = e || window.event;
+					canvasX = e.pageX - myCanvas.offsetLeft;
+					canvasY = e.pageY - myCanvas.offsetTop;
+					cav_context.lineTo(canvasX, canvasY);
+					cav_context.stroke();
+        			// setXY(e);
+    			}
+    		  };
+            }
+
+
+//setup csrf
+$.ajaxSetup({
+    data: {
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+     },
+});
+
+}
+
+
+// using jQuery
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+
+function predict(){
+var myCanvas = document.getElementById("myCanvas");
+var img = convertCanvasToImage(myCanvas);
+
+var csrftoken = getCookie('csrftoken');
+$.ajax({
+            type: 'POST',
+            url: '/ai/recognize/',
+            async: false,
+            //dataType: 'json',
+            contentType:"application/x-www-form-urlencoded",
+            //processData: false,
+            data: {
+                'image':img.src
+            },
+            beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+            },
+            success: function (data) {
+                var c = data['result']['class'];
+                var probability = data['result']['probability'];
+                var z = document.createElement('p');
+                z.innerHTML = '我有【' + probability + '】的概率确信您写的是：【' + c + '】，对吗?';
+                document.getElementById("result").innerHTML = '';
+                document.getElementById("result").appendChild(z);
+            }
+        });
+}
+
+function reset_canvas(){
+        var elem = document.getElementById('myCanvas');
+        var context = elem.getContext('2d');
+        context.clearRect(0, 0, cav_elem.width, cav_elem.height);
+         context.lineWidth = lineWidth;
+         context.fillStyle = '#FFFFFF';
+         context.fillRect(0, 0, cav_elem.width, cav_elem.height);
+}
+
+// Converts canvas to an image
+function convertCanvasToImage(canvas) {
+	var image = new Image();
+	image.src = canvas.toDataURL("image/png");
+	return image;
+}
+
+
+</script>
+{% endblock %}
+
+
+
+
+

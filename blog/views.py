@@ -7,6 +7,9 @@ from blog.models import Article
 from .forms import AddForm, LoginForm, CommentForm
 from .util import util
 from .constants import constants
+from django.http import JsonResponse
+import base64
+from blog.util import cnn_mnist
 
 
 def index(request):
@@ -66,3 +69,21 @@ def add(request):
 
 def about(request):
     return render(request, constants.HTML_ABOUT)
+
+
+def ai_index(request):
+    return render(request, constants.HTML_AI_INDEX)
+
+
+def ai_recognize(request):
+    res = {}
+    if request.is_ajax():
+        img = request.POST['image'].split(",")[1].encode('utf-8')
+        print(img)
+        print(type(img))
+        imgdata = base64.b64decode(img)
+        fh = open("tmp/image.png", "wb")
+        fh.write(imgdata)
+        fh.close()
+        res['result'] = cnn_mnist.recognize("tmp/image.png")
+    return JsonResponse(res, safe=False)

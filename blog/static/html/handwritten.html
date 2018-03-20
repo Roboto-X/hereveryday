@@ -1,0 +1,161 @@
+<html>     
+     
+<head>     
+<meta charset="utf-8" />
+<title>Title</title>     
+<script type="text/javascript">     
+var ball;      
+var mouseX = 100;      
+var mouseY = 100;      
+var angle = 0;      
+var radius = 0;      
+     
+var ballstyle = "."     
+var ballcolor = "#FF0000";      
+var allzindex = 0;      
+     
+var cav_elem;      
+var cav_context;      
+var mouse_down = false;
+var lineWidth = 5;
+     
+//old positon      
+var opos;      
+     
+function draw(){      
+        ball = document.createElement("p");      
+        ball.style.position = "absolute";      
+        ball.style.color = ballcolor;      
+        ball.style.zIndex = allzindex+1;      
+        ball.innerHTML = ballstyle;      
+        document.body.appendChild(ball);      
+        document.all.selected = false;      
+          
+    ball.style["left"] = mouseX+ "px";      
+    ball.style["top"] = mouseY+ "px";      
+}      
+function draw_cav(npos){      
+          
+     
+           
+    if(opos){      
+        cav_context.beginPath();      
+        // Start from the top-left point.      
+          
+        cav_context.moveTo(opos.x,opos.y);       
+        cav_context.lineTo(npos.x,npos.y);      
+          
+        cav_context.stroke();      
+        cav_context.closePath();      
+              
+    }      
+     
+}      
+     
+function MousePos(e){      
+    eee = e || window.event;      
+    var x,y;      
+    if(!document.all){      
+        x = e.pageX;      
+        y = e.pageY;      
+    }      
+    else{      
+        x = event.clientX + document.documentElement.scrollLeft;      
+        y = event.clientY + document.documentElement.scrollTop;      
+    }      
+    return {x:x,y:y};      
+}      
+function setXY(e){      
+    eee = e || window.event;      
+    var pos = MousePos(e);      
+    mouseX = pos.x;      
+    mouseY = pos.y;      
+    //if(e.button == 1){      
+        draw_cav(pos);      
+    //}      
+    opos = pos;      
+}      
+window.onload = function(){      
+          
+        //get canvas and context      
+            var elem = document.getElementById('myCanvas');      
+            if (elem && elem.getContext) {      
+                cav_elem = elem;      
+              var context = elem.getContext('2d');      
+              if (context) {      
+                cav_context = context;      
+                cav_context.lineWidth = lineWidth;
+                //cav_context.fillRect(0, 0, cav_elem.width, cav_elem.height);      
+              }      
+              elem.onmousedown = function(e){
+              	mouse_down = true;
+              	cav_context.beginPath();   
+              	canvasX = e.pageX - myCanvas.offsetLeft;
+				canvasY = e.pageY - myCanvas.offsetTop;   
+        		cav_context.moveTo(canvasX, canvasY);       
+              };
+              elem.onmouseup = function(e){
+              	mouse_down = false;
+              	cav_context.closePath();
+              };
+              elem.onmousemove = function(e){ 
+    			if(mouse_down){
+					eee = e || window.event;      
+					canvasX = e.pageX - myCanvas.offsetLeft;
+					canvasY = e.pageY - myCanvas.offsetTop;
+					cav_context.lineTo(canvasX, canvasY);
+					cav_context.stroke();
+        			// setXY(e);	
+    			}      
+    		  }; 
+            }      
+                  
+      
+}
+
+function predict(){
+var myCanvas = document.getElementById("myCanvas");
+var img = convertCanvasToImage(myCanvas);
+$.ajax({
+            type: 'POST',
+            url: '/recognize/',
+            async: false,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            data: { file : img },
+            success: function (data) {
+                //alert(data);
+            }
+        });
+console.log(img);
+document.getElementById("result").appendChild(img);
+}
+
+// Converts canvas to an image
+function convertCanvasToImage(canvas) {
+	var image = new Image();
+	image.src = canvas.toDataURL("image/png");
+	return image;
+}      
+</script>     
+</head>     
+<body onselectstart = "return false;">   
+    <canvas id="myCanvas" border="1" width="280px" height="280px">
+     Fallback content, in case the browser does not support Canvas.      
+  </canvas> 
+  <h2>请输入0-9任意数字</h2>  
+  <a href="javascript:void(0);" onclick="predict()">识别</a>    
+  <hr/>
+  <div id='result'></div>
+<script src="../js/jquery.min.js"></script>
+</body>
+<style>
+#myCanvas {
+	cursor: crosshair;
+	border: solid #c3c3c3;
+	width="512px";
+	height="512px";
+}
+</style>     
+</html>    

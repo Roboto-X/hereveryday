@@ -13,6 +13,9 @@ urlpatterns = [
     url(r'^blog/add/$', blog_views.add, name="add"),  # blog add article
     url(r'^blog/about/$', blog_views.about, name="about"),  # blog add article
 
+    url(r'^ai/index/$', blog_views.ai_index, name="ai_index"),  # ai index
+    url(r'^ai/recognize/$', blog_views.ai_recognize, name="ai_recognize"),  # recognize a hand-written number
+
 
     url(r'^admin/', admin.site.urls),
 ]
